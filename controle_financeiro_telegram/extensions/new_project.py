@@ -93,6 +93,7 @@ def init_bot(bot, start):
                     session.commit()
                 bot.send_message(message.chat.id, 'Projeto Criado!')
                 start(message)
+                bot.delete_state(message.chat.id, message.chat.id)
         except ValueError:
             bot.send_message(
                 message.chat.id, 'Valor inválido, digite somente números'

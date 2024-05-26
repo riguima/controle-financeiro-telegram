@@ -24,9 +24,20 @@ class Project(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     cliente: Mapped['Client'] = relationship(back_populates='projetos')
     cliente_id: Mapped[int] = mapped_column(ForeignKey('clientes.id'))
+    recebimentos: Mapped[List['Receipt']] = relationship(
+        back_populates='projeto', cascade='all, delete-orphan'
+    )
     valor_total: Mapped[float]
     entrada: Mapped[float]
     parcelas: Mapped[int]
+
+
+class Receipt(Base):
+    __tablename__ = 'recebimentos'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    projeto: Mapped['Project'] = relationship(back_populates='recebimentos')
+    projeto_id: Mapped[int] = mapped_column(ForeignKey('projetos.id'))
+    valor: Mapped[float]
 
 
 Base.metadata.create_all(db)
