@@ -26,6 +26,11 @@ def start(message):
     )
 
 
+@bot.callback_query_handler(func=lambda c: c.data == 'return_to_main_menu')
+def return_to_main_menu(callback_query):
+    start(callback_query.message)
+
+
 def load_extensions():
     for extension in config['EXTENSIONS']:
         extension_module = import_module(extension)

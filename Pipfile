@@ -8,6 +8,7 @@ pytelegrambotapi = "*"
 toml = "*"
 sqlalchemy = "*"
 pytz = "*"
+prettytable = "*"
 
 [dev-packages]
 blue = "*"
