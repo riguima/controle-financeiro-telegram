@@ -1,5 +1,7 @@
-from typing import List
+from datetime import date, datetime
+from typing import List, Optional
 
+import pytz
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.orm.properties import ForeignKey
 
@@ -22,6 +24,9 @@ class Client(Base):
 class Project(Base):
     __tablename__ = 'projetos'
     id: Mapped[int] = mapped_column(primary_key=True)
+    data: Mapped[Optional[date]] = mapped_column(
+        default=datetime.now(pytz.timezone('America/Sao_Paulo')).date()
+    )
     cliente: Mapped['Client'] = relationship(back_populates='projetos')
     cliente_id: Mapped[int] = mapped_column(ForeignKey('clientes.id'))
     recebimentos: Mapped[List['Receipt']] = relationship(
@@ -35,6 +40,9 @@ class Project(Base):
 class Receipt(Base):
     __tablename__ = 'recebimentos'
     id: Mapped[int] = mapped_column(primary_key=True)
+    data: Mapped[Optional[date]] = mapped_column(
+        default=datetime.now(pytz.timezone('America/Sao_Paulo')).date()
+    )
     projeto: Mapped['Project'] = relationship(back_populates='recebimentos')
     projeto_id: Mapped[int] = mapped_column(ForeignKey('projetos.id'))
     valor: Mapped[float]

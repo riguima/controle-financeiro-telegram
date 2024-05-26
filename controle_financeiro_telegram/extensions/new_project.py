@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from telebot.handler_backends import StatesGroup, State
+from telebot.handler_backends import State, StatesGroup
 
 from controle_financeiro_telegram.database import Session
 from controle_financeiro_telegram.models import Client, Project
@@ -18,14 +18,20 @@ def init_bot(bot, start):
         bot.send_message(
             callback_query.message.chat.id, 'Digite o nome do cliente'
         )
-        bot.set_state(callback_query.message.chat.id, NewProjectStates.client_name, callback_query.message.chat.id)
+        bot.set_state(
+            callback_query.message.chat.id,
+            NewProjectStates.client_name,
+            callback_query.message.chat.id,
+        )
 
     @bot.message_handler(state=NewProjectStates.client_name)
     def on_client_name(message):
         with bot.retrieve_data(message.chat.id, message.chat.id) as data:
             data['client_name'] = message.text
         bot.send_message(message.chat.id, 'Digite o valor total')
-        bot.set_state(message.chat.id, NewProjectStates.total_value, message.chat.id)
+        bot.set_state(
+            message.chat.id, NewProjectStates.total_value, message.chat.id
+        )
 
     @bot.message_handler(state=NewProjectStates.total_value)
     def on_total_value(message):
@@ -35,12 +41,16 @@ def init_bot(bot, start):
                     message.text.replace('.', '').replace(',', '.')
                 )
             bot.send_message(message.chat.id, 'Digite o valor de entrada')
-            bot.set_state(message.chat.id, NewProjectStates.entry_value, message.chat.id)
+            bot.set_state(
+                message.chat.id, NewProjectStates.entry_value, message.chat.id
+            )
         except ValueError:
             bot.send_message(
                 message.chat.id, 'Valor inválido, digite somente números'
             )
-            bot.set_state(message.chat.id, NewProjectStates.total_value, message.chat.id)
+            bot.set_state(
+                message.chat.id, NewProjectStates.total_value, message.chat.id
+            )
 
     @bot.message_handler(state=NewProjectStates.entry_value)
     def on_entry_value(message):
@@ -51,20 +61,29 @@ def init_bot(bot, start):
                 )
                 if data['entry_value'] > data['total_value']:
                     bot.send_message(
-                        message.chat.id, 'Valor da entrada não pode ser maior que o valor total'
+                        message.chat.id,
+                        'Valor da entrada não pode ser maior que o valor total',
                     )
-                    bot.set_state(message.chat.id, NewProjectStates.entry_value, message.chat.id)
+                    bot.set_state(
+                        message.chat.id,
+                        NewProjectStates.entry_value,
+                        message.chat.id,
+                    )
                     return
             bot.send_message(
                 message.chat.id,
                 'Digite o números de parcelas (0 para a vista)',
             )
-            bot.set_state(message.chat.id, NewProjectStates.installment, message.chat.id)
+            bot.set_state(
+                message.chat.id, NewProjectStates.installment, message.chat.id
+            )
         except ValueError:
             bot.send_message(
                 message.chat.id, 'Valor inválido, digite somente números'
             )
-            bot.set_state(message.chat.id, NewProjectStates.entry_value, message.chat.id)
+            bot.set_state(
+                message.chat.id, NewProjectStates.entry_value, message.chat.id
+            )
 
     @bot.message_handler(state=NewProjectStates.installment)
     def on_installment(message):
@@ -98,4 +117,6 @@ def init_bot(bot, start):
             bot.send_message(
                 message.chat.id, 'Valor inválido, digite somente números'
             )
-            bot.set_state(message.chat.id, NewProjectStates.entry_value, message.chat.id)
+            bot.set_state(
+                message.chat.id, NewProjectStates.entry_value, message.chat.id
+            )

@@ -7,6 +7,7 @@ name = "pypi"
 pytelegrambotapi = "*"
 toml = "*"
 sqlalchemy = "*"
+pytz = "*"
 
 [dev-packages]
 blue = "*"
