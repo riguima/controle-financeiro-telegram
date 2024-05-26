@@ -2,7 +2,7 @@ from sqlalchemy import select
 from telebot.handler_backends import State, StatesGroup
 
 from controle_financeiro_telegram.database import Session
-from controle_financeiro_telegram.models import Client, Project
+from controle_financeiro_telegram.models import Client, Project, Receipt
 
 
 class NewProjectStates(StatesGroup):
@@ -109,6 +109,12 @@ def init_bot(bot, start):
                         parcelas=int(message.text),
                     )
                     session.add(project)
+                    session.flush()
+                    receipt = Receipt(
+                        projeto=project,
+                        valor=data['entry_value'],
+                    )
+                    session.add(receipt)
                     session.commit()
                 bot.send_message(message.chat.id, 'Projeto Criado!')
                 start(message)
